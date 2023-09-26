@@ -14,9 +14,13 @@ public class ExpenseTrackerView extends JFrame {
   private JTextField amountField;
   private JTextField categoryField;
   private DefaultTableModel model;
+  private JTextField MinamountField;
+private JTextField MaxamountField;
+private  JButton ApplyAmountFilterBtn; 
   private List<Transaction> transactions = new ArrayList<>();
+  private String selectedCategory;
+   JComboBox<String> categoryFilterComboBox;
 
-  
 
   public JTable getTransactionsTable() {
     return transactionsTable;
@@ -38,17 +42,47 @@ public class ExpenseTrackerView extends JFrame {
   public String getCategoryField() {
     return categoryField.getText();
   }
+  public String getSelectedCategory() {
+    selectedCategory = (String) categoryFilterComboBox.getSelectedItem();
+    return selectedCategory;
+  }
+
 
   public void setCategoryField(JTextField categoryField) {
     this.categoryField = categoryField;
   }
+ public void setMinAmount(JTextField minAmount) {
+this.MinamountField = MinamountField;
+}
+public void setMaxAmount(JTextField minAmount) {
+this.MaxamountField = MaxamountField;
+} 
+public double getMinAmount() {
+double Minamount = Double.parseDouble(MinamountField.getText());
+return Minamount;
+}
+public double getMaxAmount() {
+double MaxAmount = Double.parseDouble(MaxamountField.getText());
+return MaxAmount;
+}
+
+
+ 
 
   public JButton getAddTransactionBtn() {
     return addTransactionBtn;
   }
+
+  public JButton getApplyAmountFilterbtn() {
+return ApplyAmountFilterBtn;
+}
+
+
+  
   public DefaultTableModel getTableModel() {
     return model;
   }
+
 
   public ExpenseTrackerView(DefaultTableModel model) {
     setTitle("Expense Tracker"); // Set title
@@ -56,14 +90,29 @@ public class ExpenseTrackerView extends JFrame {
     this.model = model;
 
     addTransactionBtn = new JButton("Add Transaction");
+    categoryFilterComboBox  = new JComboBox<>(new String[]{"All", "Food", "Travel", "Bills", "Entertainment", "Other"});
 
     // Create UI components
     JLabel amountLabel = new JLabel("Amount:");
     amountField = new JTextField(10);
+   
     
     JLabel categoryLabel = new JLabel("Category:");
     categoryField = new JTextField(10);
-    transactionsTable = new JTable(model);
+
+    JLabel AmountMinLabel = new JLabel("AmountMin:");
+    MinamountField = new JTextField(10);
+    JLabel AmountMaxLabel = new JLabel("AmountMax:");
+    MaxamountField = new JTextField(10);
+    ApplyAmountFilterBtn = new JButton("Amount Filter Button ");
+
+    
+
+    
+    transactionsTable = new JTable(model); 
+
+  
+
   
     // Layout components
     JPanel inputPanel = new JPanel();
@@ -71,6 +120,15 @@ public class ExpenseTrackerView extends JFrame {
     inputPanel.add(amountField);
     inputPanel.add(categoryLabel); 
     inputPanel.add(categoryField);
+    inputPanel.add(AmountMinLabel);
+    inputPanel.add(MinamountField);
+    inputPanel.add(AmountMaxLabel);
+    inputPanel.add(MaxamountField);
+    inputPanel.add(ApplyAmountFilterBtn);
+
+    
+    inputPanel.add(new JLabel("Filter by Category:"));
+    inputPanel.add(categoryFilterComboBox);
     inputPanel.add(addTransactionBtn);
   
     JPanel buttonPanel = new JPanel();
@@ -79,7 +137,9 @@ public class ExpenseTrackerView extends JFrame {
     // Add panels to frame
     add(inputPanel, BorderLayout.NORTH);
     add(new JScrollPane(transactionsTable), BorderLayout.CENTER); 
-    add(buttonPanel, BorderLayout.SOUTH);
+    add(buttonPanel, BorderLayout.SOUTH); 
+
+ 
   
     // Set frame properties
     setSize(400, 300);
@@ -129,10 +189,36 @@ public class ExpenseTrackerView extends JFrame {
     getTableModel().addRow(new Object[]{t.getAmount(), t.getCategory(), t.getTimestamp()});
     refresh();
   }
-  
-  public void showMessage(String message) {
+
+   public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Message", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    public void applyCategoryFilter(String selectedCategory) {
+    // Filter transactions based on the selected category
+    List<Transaction> filteredTransactions = new ArrayList<>();
+    for (Transaction t : transactions) {
+        if (t.getCategory().equalsIgnoreCase(selectedCategory)) {
+            filteredTransactions.add(t);
+        }
+    }
+    // Update the table to display the filtered transactions
+    refreshTable(filteredTransactions);
+}
+public void applyAmountFilter(double minAmount, double maxAmount) {
+    // Filter transactions based on the specified amount range
+    List<Transaction> filteredTransactions = new ArrayList<>();
+    for (Transaction t : transactions) {
+        double amount = t.getAmount();
+        if (amount >= minAmount && amount <= maxAmount) {
+            filteredTransactions.add(t);
+        }
+    }
+    // Update the table to display the filtered transactions
+    refreshTable(filteredTransactions);
+}
+
+  
 
 
   // Other view methods
