@@ -130,6 +130,9 @@ public class ExpenseTrackerView extends JFrame {
     refresh();
   }
   
+  public void showMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Message", JOptionPane.INFORMATION_MESSAGE);
+    }
 
 
   // Other view methods
