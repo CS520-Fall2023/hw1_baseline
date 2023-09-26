@@ -45,6 +45,18 @@ public class ExpenseTrackerApp {
       view.addTransaction(t);
     });
 
+        view.categoryFilterComboBox.addActionListener(e -> {
+    String selectedCategory = view.getSelectedCategory();
+    view.applyCategoryFilter(selectedCategory);
+});  
+
+
+    view.getApplyAmountFilterbtn().addActionListener(e -> {
+    double minAmount = view.getMinAmount();
+    double maxAmount = view.getMinAmount();
+    view.applyAmountFilter(minAmount, maxAmount);
+});
+
   }
 
 }
